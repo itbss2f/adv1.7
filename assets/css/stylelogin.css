@@ -1,0 +1,65 @@
+body {margin:0;text-align:left;color:#333333;}
+body, input, select, textarea, .ui-widget {font-family:Arial,sans-serif !important;font-size:13px;}
+
+/* Data Entry */
+input {border:1px solid #BBBBBB;padding:4px;/*font-family:'MS Shell Dlg';*/font-size:12px;width:180px;}
+input.datepicker {width:80px;}
+input.time {width:80px;}
+input.search {padding:5px 8px;width:300px;font-size:13px;}
+input.submit {width:70px;padding:5px;}
+input.checkbox, input.radio {width:auto;}              
+
+/* DT/DT/DD */
+dl {margin:0;}
+dt, dd {display:inline-block;*display:inline;vertical-align:top;padding:10px;}
+dt, dd {width:150px;white-space:nowrap;}
+dd ul {margin:0;}
+dd span {overflow:hidden;-width:100%;display:block;}
+dd input, dd select {margin-top:-5px;}
+
+ul.inline {margin:0;padding:0}
+ul.inline li {display:inline-block;}
+        
+.normal {font-size:13px;font-weight:normal;border:none !important;}
+.hide {display:none;}
+.left {float:left;}
+.right {float:right;}
+.clear {clear:both;}
+/*.hover {background:#007ACC;color:#FFF;}*/
+.hover, .selected {background:#BBB;color:#FFF;}
+.uppercase {text-transform: uppercase;}
+
+.text-left {text-align:left;}
+.text-right {text-align:right;}
+.text-center {text-align:center;}
+
+.error {font-size:10px;color:red;}
+.strong {font-weight:bolder;font-size:14px;}
+
+/* VERTICAL ALIGNMENT */
+/*dl.vt {display:inline-block;*display:inline;}*/
+dl.vt dt {display:block;width:auto;}
+dl.vt dt {-padding-bottom:0;}
+dl.vt dd {margin-left:0;width:auto;}
+dl.vt dt, dl.vt dt {display:block;}
+
+dt.numeric, dd.numeric {text-align:right;}
+
+/*dl.thead dt {cursor:pointer;padding-left:25px;width:95px;text-align:right;}*/
+
+dl.thead {font-weight:bold;border-bottom:3px solid #D7D7D7;}
+dl.thead dt, dl.thead dd {border-right:1px solid #D7D7D7;}
+dl.tbody dt, dl.tbody dd {border-right:1px solid #D7D7D7;margin-left:0 !important;}
+
+dl.tbody.hoverable {cursor:pointer;}
+
+/* Fixed */
+
+div.fixed {position:relative;width:inherit;background:inherit}
+div.fixed .inner {padding:0 !important;position:fixed;z-index:99;width:inherit;height:inherit;background:inherit}
+div.fixed .inner.remove {position:relative;}
+
+/* Doc 3 */
+#doc3 {margin: 0;min-width:950px;}
+#login {background:white;position:relative;padding:10px;margin-top:10%;border: 5px solid #CCCCCC;-moz-border-raduis:5px;border-radius:5px 5px 5px 5px;width:100%;height: 250px;}
+#company_logo {width:750px;height:80px;}

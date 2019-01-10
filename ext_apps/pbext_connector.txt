@@ -1,0 +1,2 @@
+net use R: /delete /y
+net use R: \\128.1.44.3\pbext
