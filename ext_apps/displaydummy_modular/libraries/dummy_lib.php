@@ -174,28 +174,28 @@ class Dummy_Lib {
                     break;
                 }    
                       
-                imagefilledrectangle($im, ($box_x1 + $margin_left), ($box_y1 + $margin_top), (($box_x1 + $margin_left) + $box_x2), (($box_y1 + $margin_top) + $box_y2), $rectcolor);    
-                
+                imagefilledrectangle($im, ($box_x1 + $margin_left), ($box_y1 + $margin_top), (($box_x1 + $margin_left) + $box_x2), (($box_y1 + $margin_top) + $box_y2), $rectcolor);       
+
                 $char = 6;
-                $fontsize = 40;
+                $fontsize = 65;
                 $textlen = ($data['boxprint'][$b]['box_width'] * $char) + $data['boxprint'][$b]['box_width'];
-                if ($data['boxprint'][$b]['box_width'] <= 2 && $data['boxprint'][$b]['box_height'] <= 2) {
-                    $fontsize = 25;  
-                    $textlen = 15;
+                if ($data['boxprint'][$b]['box_width'] <= 6 && $data['boxprint'][$b]['box_height'] <= 6) {
+                    $fontsize = 40;  //25
+                    $textlen = 25;
                 }            
                 $lines = explode('|', wordwrap($data['boxprint'][$b]['ao_payee'], $textlen, '|'));
-                $textx = ($box_x1 + $margin_left) + 10;                                                                                                                                                                 
-                $texty = ($box_y1 + $margin_top) + ($data['boxprint'][$b]['box_width'] * 20);
+                $textx = ($box_x1 + $margin_left) + 20;                                                                                                                                                                 
+                $texty = ($box_y1 + $margin_top) + ($data['boxprint'][$b]['box_width'] * 30);
                 imagettftext($im, $fontsize, 0, $textx, $texty, $black, $font, $data['boxprint'][$b]['color_name'].' '.$data['boxprint'][$b]['ao_num']); 
-                $texty += 45;              
+                $texty += 65;              
                 imagettftext($im, $fontsize, 0, $textx, $texty, $black, $font, $data['boxprint'][$b]['boxsize']);     
-                $texty += 45;            
+                $texty += 65;            
                 foreach ($lines as $line)
                 {                                                
                     imagettftext($im, $fontsize, 0, $textx, $texty, $black, $font, $line);     
-                    $texty += 45;           
+                    $texty += 65;           
                 }
-                imagettftext($im, $fontsize, 0, $textx, $texty, $black, $font, $data['boxprint'][$b]['ao_eps']);     
+                imagettftext($im, $fontsize, 0, $textx, $texty, $black, $font, $data['boxprint'][$b]['ao_eps']);   
                             
             }
         }
@@ -204,7 +204,6 @@ class Dummy_Lib {
         
         imagettftext($im, 50, 0, $paper_size['width'] - 350, 280, $black, $font, round($pagepercent, 2).'%');     
         
-
         imagejpeg($im, "/tmp/dummy_layout_output/".$randname."".$data['pageprint']['book_name']."".$data['pageprint']['folio_number'].".jpg");
         #imagejpeg($im, "D:\\test\\".$randname."".$data['pageprint']['book_name']."".$data['pageprint']['folio_number'].".jpg");
         imagedestroy($im);         
