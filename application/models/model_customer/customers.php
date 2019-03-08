@@ -1160,8 +1160,9 @@ class Customers extends CI_Model {
                         CONCAT(IFNULL(cc_name2, ''), ' ', IFNULL(cc_position2, ''), ' ', IFNULL(cc_email2,''), ' ', IFNULL(cc_contact2, '')) AS contact2,
                         CONCAT(IFNULL(cc_name3, ''), ' ', IFNULL(cc_position3, ''), ' ', IFNULL(cc_email3,''), ' ', IFNULL(cc_contact3, '')) AS contact3  
                  FROM miscmf 
-                 WHERE cmf_catad = '1' AND (cmf_code LIKE '%$search%' OR cmf_name LIKE '%$search%') ORDER BY cmf_code";
+                 WHERE (cmf_code LIKE '%$search%' OR cmf_name LIKE '%$search%') ORDER BY cmf_code";
         
+        #echo "<pre>"; echo $stmt; exit; 
         $result = $this->db->query($stmt)->result_array();
         
         return $result;

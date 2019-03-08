@@ -39,7 +39,8 @@
                    
                       <div class="span1"><b>Date</b></div>    
                   
-                      <div class="span1" style="width: 80px;"><input type="text" name="issue_date" id="issue_date" class="datepicker"></div>  
+                      <div class="span1" style="width: 80px;"><input type="text" name="issue_datefrom" id="issue_datefrom" class="datepicker"></div>  
+                      <div class="span1" style="width: 80px;"><input type="text" name="issue_dateto" id="issue_dateto" class="datepicker"></div>  
                             
                  <div class="span1"><button class="btn" id="generatereport" type="button">Search</button> </div>
                  <div class="span1"><button class="btn" id="generateexcel" type="button">Export</button> </div>
@@ -141,7 +142,8 @@
        });
    });
    
-   $("#issue_date").datepicker({dateFormat:"yy-mm-dd"});
+   $("#issue_datefrom").datepicker({dateFormat:"yy-mm-dd"});
+   $("#issue_dateto").datepicker({dateFormat:"yy-mm-dd"});
    
    $("#generatereport").die().live('click',function(){
   
@@ -154,7 +156,8 @@
 });
    
    function validate(){   
-    var validate_fields = ['#ao_no'];
+    //var validate_fields = ['#ao_no'];
+    var validate_fields = [''];
 
      
       var countValidate = 0; 
@@ -209,7 +212,6 @@
  }
                        
   //Pop-up Search Form///   
-    
  $(".search").die().live("click",function()
    {
        $id = $(this).attr("ao_id");
@@ -255,7 +257,8 @@
  $("#generateexcel").die().live ("click",function() {
      
     var ao_num = $("#ao_no").val();      
-    var issue_date = $("#issue_date").val();      
+    var issue_datefrom = $("#issue_datefrom").val();      
+    var issue_dateto = $("#issue_dateto").val();      
     
     
     var countValidate = 0;  
@@ -273,7 +276,7 @@
     if (countValidate == 0)
     
     { 
-    window.open("<?php echo site_url('cdrform/generateexport/') ?>?ao_num="+ao_num+"&issue_date="+issue_date, '_blank');
+    window.open("<?php echo site_url('cdrform/generateexport/') ?>?ao_num="+ao_num+"&issue_datefrom="+issue_datefrom+"&issue_dateto="+issue_dateto, '_blank');
         window.focus();
     }
  });

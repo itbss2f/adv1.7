@@ -26,9 +26,9 @@ class Cdrforms extends CI_Model
         if ($cdr_no != "") {
             $concdrno = "AND a.ao_cdr_num  = '$cdr_no'";    
         }if ($datefrom !=""){
-             $confrom = "AND a.ao_issuefrom = '$datefrom'"; 
+             $confrom = "AND a.ao_issuefrom >= '$datefrom'"; 
         }if ($dateto != ""){
-            $conto = "AND a.ao_issuefrom = '$dateto'";
+            $conto = "AND a.ao_issuefrom <= '$dateto'";
         }if($client_name != ""){
             $conclient = "AND c.cmf_name LIKE '%$client_name%'"; 
         }if ($agency_name != ""){
@@ -84,11 +84,21 @@ class Cdrforms extends CI_Model
     
     public function generate($data)
     {   
-        $condate = "";
-        if(!empty($data['issue_date']))
+         $condate = ""; 
+         $conaonum = "";
+
+
+        if(!empty($data['issue_datefrom']))
         {
-           $condate  = " AND DATE(a.ao_issuefrom) = '$data[issue_date]'  "; 
+           $condate  = "AND DATE(a.ao_issuefrom) >= '$data[issue_datefrom]' AND DATE(a.ao_issuefrom) <= '$data[issue_dateto]'"; 
         }
+
+        if(!empty($data['ao_num'])) {
+
+            $conaonum = "a.ao_num = '$data[ao_num]' ";
+        }
+
+
         $stmt = "SELECT a.id,
                         a.ao_sinum,
                         a.ao_num,
@@ -118,9 +128,10 @@ class Cdrforms extends CI_Model
             LEFT OUTER JOIN users f ON f.id = e.user_id
             LEFT OUTER JOIN misadtype AS g ON g.id = b.ao_adtype
             LEFT OUTER JOIN miscdrtype h ON h.id = a.ao_cdr_type
-            WHERE a.ao_num = '$data[ao_num]'  $condate
+            WHERE $conaonum $condate
             ORDER BY ao_cdr_date ASC";
-        
+
+        #echo "<pre>"; echo $stmt; exit;
         $result = $this->db->query($stmt)->result_array();
         return $result;
     }

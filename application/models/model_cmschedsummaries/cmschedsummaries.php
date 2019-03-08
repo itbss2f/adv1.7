@@ -352,7 +352,7 @@
                 return $result->result_array();
             }
             
-            public function upload_or($data)
+            public function upload_or_iesadv($data)
             {    
                  $stmt = "SELECT m.or_num, 
                                  DATE_FORMAT(m.or_date, '%m/%d/%Y') AS or_date, 
@@ -385,7 +385,8 @@
                                   REPLACE(REPLACE(SUBSTR(m.or_add1,1,40),'Ñ',''),'ñ','')  AS address1,
                                   REPLACE(REPLACE(SUBSTR(m.or_add2,1,40),'Ñ',''),'ñ','')  AS address2,
                                   REPLACE(REPLACE(SUBSTR(m.or_add3,1,40),'Ñ',''),'ñ','')  AS address3,
-                                  m.or_tin  
+                                  m.or_tin
+
                                    
                                                
                     FROM or_m_tm AS m
@@ -401,7 +402,66 @@
                   $result = $this->db->query($stmt);
                   return $result->result_array();
             }
-            
+
+            public function upload_or($data)
+            {    
+                 $stmt = "SELECT m.or_num, 
+                                 DATE_FORMAT(m.or_date, '%m/%d/%Y') AS or_date, 
+                                 m.or_prnum, 
+                                 IF(torf.torf_code = 'R','D',torf.torf_code) AS accttype, 
+                                 emp.empprofile_code AS collinit,
+                                 IF (m.or_amf != '' , 'Y', 'C') AS payee, 
+                                 adtype.adtype_code AS paytype, 
+                                 IF (m.or_amf != '' , IF (CHAR_LENGTH(m.or_amf) > 5 , 'WI', m.or_amf) , '') AS agycode, 
+                                 IF (m.or_cmf != '', IF (CHAR_LENGTH(m.or_cmf) > 5 , 'WI', m.or_cmf) , '') AS clientcode, 
+                                 '' AS agntcode, 
+                                 IF (m.status = 'C', 'CANCELLED',REPLACE(REPLACE(SUBSTR(m.or_payee,1,40),'Ñ','N'),'ñ','n')) AS or_payee, 
+                                 m.or_amt AS or_amt, 
+                                 m.or_amtword AS or_amtword, 
+                                 IF(m.or_bnacc = 0, 'EXDEAL', baf.baf_acct) AS baf_acct,  
+                                 IF (m.status = 'C', 'CANCELLED', SUBSTR(m.or_part,1,60)) AS or_part,
+                                 'A' AS or_artype, 
+                                 IF (m.status = 'C', 'C', 'A') AS stat, 
+                                 DATE_FORMAT(m.edited_d, '%m/%d/%Y %h:%m:%s') AS statusdate,
+                                 emp.empprofile_code AS usern, 
+                                 DATE_FORMAT(m.user_d, '%m/%d/%Y %h:%m:%s') AS userd, 
+                                 'INQUIRER' AS product,
+                                 '' AS init_mark, 
+                                 '' AS gls_mark, 
+                                 '' AS gls_date,
+                                --  m.or_wtaxamt AS tota_wtax,
+                                 '0' AS tota_wtax,
+                                  m.or_gov,
+                                  branch.branch_code,
+                                  REPLACE(REPLACE(SUBSTR(m.or_add1,1,40),'Ñ',''),'ñ','')  AS address1,
+                                  REPLACE(REPLACE(SUBSTR(m.or_add2,1,40),'Ñ',''),'ñ','')  AS address2,
+                                  REPLACE(REPLACE(SUBSTR(m.or_add3,1,40),'Ñ',''),'ñ','')  AS address3,
+                                  m.or_tin, 
+                                  CONCAT(u.firstname, ' ',u.lastname ) AS fullname,
+                                  branch.branch_name,
+                                  vat.vat_code,
+                                  m.or_cmfvatrate,
+                                  'INQUIRER' AS productx,
+                                  m.or_wtaxpercent,
+                                  IF(m.or_type = 3 AND m.or_part LIKE 'S-%', 1, 0) AS subscription
+              
+                    FROM or_m_tm AS m
+                    LEFT OUTER JOIN mistorf AS torf ON torf.id = m.or_type
+                    LEFT OUTER JOIN misempprofile AS emp ON emp.user_id = m.or_ccf
+                    LEFT OUTER JOIN users AS u ON u.id = emp.user_id                    
+                    LEFT OUTER JOIN misadtype AS adtype ON adtype.id = m.or_adtype
+                    LEFT OUTER JOIN miscaf AS e ON e.id = adtype.adtype_araccount  
+                    LEFT OUTER JOIN misbaf AS baf ON baf.id = m.or_bnacc
+                    LEFT OUTER JOIN misbranch AS branch ON branch.id = m.or_branch  
+                    LEFT OUTER JOIN misvat AS vat ON vat.id = m.or_cmfvatcode  
+                    WHERE DATE(m.or_date) >= '$data[from_date]' AND DATE(m.or_date) <= '$data[to_date]' 
+                    ORDER BY m.or_date; ";         
+   
+                  $result = $this->db->query($stmt);
+                  return $result->result_array();
+            }
+
+
             public function upload_or_d($data)
             {
                 //REFER TO AO_P_TM FOR AMOUNT W/ HOLDIND TAX
@@ -427,8 +487,109 @@
                                 '' AS initmark,
                                 '' AS glsmark,
                                 '' AS glsdate, 
-                                0 AS or_assignwtaxamt , 
-                                0 AS or_assignwvatamt  
+                                0 AS or_assignwtaxamt, 
+                                0 AS or_assignwvatamt,
+                                ad.adtype_code,
+                                d.vat_code,
+                                m.or_cmfvatrate
+                                  
+                            FROM ao_p_tm AS a
+                            INNER JOIN ao_m_tm AS b ON b.ao_num = a.ao_num
+                            LEFT OUTER JOIN or_m_tm AS m ON m.or_num = a.ao_ornum
+                            LEFT OUTER JOIN misadtype AS ad ON m.or_adtype = ad.id
+                            LEFT OUTER JOIN or_d_tm AS c ON c.or_docitemid = a.id
+                            LEFT OUTER JOIN misvat AS d ON d.id = a.ao_cmfvatcode
+                            LEFT OUTER JOIN misempprofile AS emp ON emp.user_id = b.ao_aef
+                            WHERE DATE(a.ao_ordate) >= '$data[from_date]' AND DATE(a.ao_ordate) <= '$data[to_date]'   
+                            AND b.ao_paytype IN (3,4,5)
+                                
+                            UNION
+                           
+                            SELECT d.or_num, 
+                               CASE d.or_doctype
+                                WHEN 'SI' THEN 'AI'
+                                ELSE d.or_doctype
+                               END AS or_doctype,
+                               CASE d.or_doctype
+                                WHEN 'SI' THEN p.ao_sinum 
+                                ELSE d.or_docitemid
+                               END AS doc_num,                               
+                               IF (d.or_docbal > 0 , d.or_docbal, 0) AS or_docbal,
+                               CASE d.or_doctype
+                                WHEN 'SI' THEN ROUND(( d.or_assignamt /(1+(d.or_cmfvatrate/100))),2)
+                                ELSE ROUND(( d.or_assignamt /(1+(vat2.vat_rate/100))),2)  
+                               END AS or_assignamt,
+                                CASE d.or_doctype
+                                WHEN 'SI' THEN (IF(p.ao_cmfvatcode=1 OR p.ao_cmfvatcode=4 OR p.ao_cmfvatcode=5,0,ROUND((( d.or_assignamt /(1+(d.or_cmfvatrate/100)))*(d.or_cmfvatrate/100)),2)))
+                                ELSE (IF(p.ao_cmfvatcode=1 OR p.ao_cmfvatcode=4 OR p.ao_cmfvatcode=5,0,ROUND((( d.or_assignamt /(1+(vat2.vat_rate/100)))*(vat2.vat_rate/100)),2))    )
+                               END AS or_assignvatamt,
+                               IF (d.status = 'C', 'C', 'A') AS stat,
+                               DATE_FORMAT(d.edited_d, '%m/%d/%Y %h:%m:%s') AS statusdate,
+                               emp.empprofile_code AS usern, 
+                               DATE_FORMAT(d.user_d, '%m/%d/%Y %h:%m:%s') AS userd, 
+                            --   d.or_item_id, 
+                              @doc_item_id := @doc_item_id+1  AS doc_item_id,
+                               '' AS initmark, 
+                               '' AS glsmark, 
+                               '' AS glsdate, 
+                               0 AS or_assignwtaxamt, 
+                               0 AS or_assignwvatamt,
+                               c.adtype_code,
+                               CASE d.or_doctype
+                                WHEN 'SI' THEN vat.vat_code
+                                ELSE vat2.vat_code
+                                               END AS vat_code,   
+                                               CASE d.or_doctype
+                                WHEN 'SI' THEN m.or_cmfvatrate
+                                ELSE vat2.vat_rate
+                               END AS or_cmfvatrate                      
+                                
+                            FROM or_m_tm AS m
+                            LEFT OUTER JOIN or_d_tm AS d ON m.or_num = d.or_num
+                            LEFT OUTER JOIN ao_p_tm AS p ON p.id = d.or_docitemid
+                            LEFT OUTER JOIN misadtype AS c ON c.id = m.or_adtype
+                            LEFT OUTER JOIN miscaf AS e ON e.id = c.adtype_araccount 
+                            LEFT OUTER JOIN misempprofile AS emp ON emp.user_id = m.or_ccf
+                            LEFT OUTER JOIN misvat AS vat ON vat.id = p.ao_cmfvatcode
+                            LEFT OUTER JOIN miscmf AS cmf ON cmf.cmf_code = CONCAT(IFNULL(m.or_amf,''),'',IFNULL(m.or_cmf, ''))
+                            LEFT OUTER JOIN misvat AS vat2 ON vat2.id = cmf.cmf_vatcode 
+                            WHERE DATE(d.or_date) >= '$data[from_date]' AND DATE(d.or_date) <= '$data[to_date]'  
+                            AND m.or_type != '2';
+                       
+                          ";
+
+                $result = $this->db->query($stmt);
+                  
+                return $result->result_array();        
+            }
+            
+            public function upload_or_d_iesadv($data)
+            {
+                //REFER TO AO_P_TM FOR AMOUNT W/ HOLDIND TAX
+                  $this->db->query(' SET @doc_item_id=0');
+                  $this->db->query(' SET @doc_item_id2=0');
+                   
+                  $stmt = " 
+                            
+                            SELECT  
+                                a.ao_ornum,
+                                CASE c.or_doctype
+                                 WHEN 'SI' THEN 'AI'
+                                END AS or_doctype,
+                                a.ao_num AS doc_num,
+                                IF (a.ao_oramt - a.ao_amt > 0 , a.ao_oramt - a.ao_amt, 0) AS or_docbal,
+                                ROUND(( a.ao_oramt /(1+(d.vat_rate/100))),2)  AS or_assignamt  , --  ROUND(( d.or_assignamt /(1+(d.or_cmfvatrate/100))),2)
+                                IF(a.ao_cmfvatcode=1 OR a.ao_cmfvatcode=4 OR a.ao_cmfvatcode=5,0,ROUND((( a.ao_oramt /(1+(d.vat_rate/100)))*(d.vat_rate/100)),2)) AS or_assignvatamt,--   IF(p.ao_cmfvatcode=1 OR p.ao_cmfvatcode=4 OR p.ao_cmfvatcode=5,0,ROUND((( d.or_assignamt /(1+(d.or_cmfvatrate/100)))*(d.or_cmfvatrate/100)),2)) AS or_assignvatamt,     
+                                IF (c.status = 'C', 'C', 'A') AS stat,
+                                DATE_FORMAT(c.edited_d, '%m/%d/%Y %h:%m:%s') AS statusdate,
+                                emp.empprofile_code AS usern, 
+                                 DATE_FORMAT(a.user_d, '%m/%d/%Y %h:%m:%s') AS userd, 
+                                @doc_item_id := @doc_item_id+1  AS doc_item_id,
+                                '' AS initmark,
+                                '' AS glsmark,
+                                '' AS glsdate, 
+                                0 AS or_assignwtaxamt, 
+                                0 AS or_assignwvatamt
                                   
                             FROM ao_p_tm AS a
                             INNER JOIN ao_m_tm AS b ON b.ao_num = a.ao_num

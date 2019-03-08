@@ -24,8 +24,11 @@ class Cdrform extends CI_Controller
     public function generate()
     {
         $data['ao_num'] = $this->input->post('ao_no');
-        
-        $data['issue_date'] = $this->input->post('issue_date');
+
+        $data['issue_datefrom'] = $this->input->post('issue_datefrom');
+
+        $data['issue_dateto'] = $this->input->post('issue_dateto');
+
         
         $data['result'] = $this->Cdrforms->generate($data);
         
@@ -121,6 +124,8 @@ class Cdrform extends CI_Controller
                                                                                                          
         $data['result'] = $this->Cdrforms->searchData($data);      
 
+        #print_r2($data['result']); exit;
+
         $html = $this->load->view('cdrform/list',$data,true);
         
         echo json_encode($html);
@@ -174,7 +179,10 @@ class Cdrform extends CI_Controller
         $issue_date = $this->input->get("issue_date");  
 
         $data['ao_num'] = $this->input->get('ao_num');
-        $data['issue_date'] = $this->input->get('issue_date');
+
+        $data['issue_datefrom'] = $this->input->get('issue_datefrom');
+
+        $data['issue_dateto'] = $this->input->get('issue_dateto');
         
         $data['result'] = $this->Cdrforms->generate($data); 
         

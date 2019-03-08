@@ -150,6 +150,7 @@
                                  <th width="1%">#.</th>
                                 <th width="3%">AO Number</th>
                                 <th width="3%">PO Number</th>
+                                <th width="3%">PO Date</th>
                                 <th width="5%">Entered Date</th> 
                                 <th width="5%">Entered By</th> 
                                 <th width="5%">Client Name</th>
@@ -434,6 +435,7 @@
                     <td style="text-align: left; font-size: 12px; color: black"><?php echo $no ?></td>
                     <td style="text-align: left; font-size: 12px; color: black"><?php echo $list['ao_num'] ?></td>
                     <td style="text-align: left; font-size: 12px; color: black"><?php echo $list['ao_ref'] ?></td>
+                    <td style="text-align: left; font-size: 12px; color: black"><?php echo $list['refdate'] ?></td>
                     <td style="text-align: left; font-size: 12px; color: black"><?php echo $list['entereddate'] ?></td>
                     <td style="text-align: left; font-size: 12px; color: black"><?php echo $list['ao_ref'] ?></td>
                     <td style="text-align: left; font-size: 12px; color: black"><?php echo str_replace('\\','',$list['clientname']) ?></td><td style="text-align: left; font-size: 12px; color: black"><?php echo str_replace('\\','',$list['agencyname']) ?></td>
