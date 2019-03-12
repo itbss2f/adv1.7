@@ -20,6 +20,7 @@
             <th width="13%">Classification</th>
             <th width="13%">Adtype</th>      
             <th width="13%">Billing Adtype</th>      
+            <th width="13%">AI No.</th>      
                                                                                   
   </tr>
 </thead>
@@ -28,7 +29,7 @@
 <?php $subtotalamt = 0; $subtotalccm = 0; $grandtotalccm = 0; $grandtotalamt = 0; $x = 1; ?>
 <?php foreach ($dlist as $sectionname => $xlist) : ?>  
     <tr>
-        <td colspan = "11" style="background: #CCCCCC; font-size: 12px; color: red; font-weight: 300"><?php if ($sectionname == '') { echo 'No Section'; } else { echo $sectionname; } ?></td>
+        <td colspan = "12" style="background: #CCCCCC; font-size: 12px; color: red; font-weight: 300"><?php if ($sectionname == '') { echo 'No Section'; } else { echo $sectionname; } ?></td>
     </tr>
     <?php $subtotalamt = 0;  $subtotalccm = 0; $x = 1; ?>
     <?php foreach ($xlist as $list) : ?>
@@ -51,6 +52,7 @@
         <td><?php echo $list['class_name'] ?></td>
         <td><?php echo $list['adtype_code'] ?></td>
         <td><?php echo $list['billingadtype'] ?></td>
+        <td><?php echo $list['invno'] ?></td>
     </tr>
     <?php endforeach; ?> 
     <?php if ($sectionname != '') : ?>
