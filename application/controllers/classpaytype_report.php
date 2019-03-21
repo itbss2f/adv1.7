@@ -88,7 +88,7 @@ class Classpaytype_report extends CI_Controller {
         }
         
         $template->setText('PHILIPPINE DAILY INQUIRER, INC.', 12);
-        $template->setText('CLASSIFIRED PAYTYPE REPORT - '.$reportname, 10);
+        $template->setText('CLASSIFIED PAYTYPE REPORT - '.$reportname, 10);
         $template->setText('DATE FROM '.date("F d, Y", strtotime($datefrom)).' TO '. date("F d, Y", strtotime($dateto)), 9);
         $template->setText(strtoupper($branchname), 9);  
                         
@@ -97,6 +97,8 @@ class Classpaytype_report extends CI_Controller {
             
         $data = $this->classpaytypereport->classifiedpaytypereport($datefrom, $dateto, $paytype, $branch, $legder, $reporttype, urldecode($clientname), $clientcode);       
         
+        #print_r2($data); exit;
+
         $totalbilling = 0; $totalvat = 0; $totalamountdue = 0; $totalpaid = 0; $balamount = 0;
         $stotalbilling = 0; $stotalvat = 0; $stotalamountdue = 0; $stotalpaid = 0; $sbalamount = 0;
         //print_r2($data); exit;
@@ -338,6 +340,7 @@ class Classpaytype_report extends CI_Controller {
                         $totalvat += $datarow[$x]['ao_vatamt']; 
                         $totalamountdue += $datarow[$x]['ao_amt']; 
                         $totalpaid += $datarow[$x]['ordcamt'];  
+
                         $result[] = array(
                             array('text' => 'Run Date', 'align' => 'left'),
                             array('text' => $datarow[$x]['issuedate'], 'align' => 'left'),
@@ -397,7 +400,9 @@ class Classpaytype_report extends CI_Controller {
          $legder = $this->input->get("legder");
          $x = $this->input->get("x"); 
          
-         $data['dlist'] = $this->classpaytypereport->classifiedpaytypereport($datefrom, $dateto, $paytype, $branch, $legder, $reporttype, urldecode($clientname), $clientcode);     
+         $data['dlist'] = $this->classpaytypereport->classifiedpaytypereport($datefrom, $dateto, $paytype, $branch, $legder, $reporttype, urldecode($clientname), $clientcode);        
+         
+         #print_r2($data['dlist']); exit;
 
          switch ($reporttype) {
             case 0: 
@@ -428,8 +433,8 @@ class Classpaytype_report extends CI_Controller {
          $data['legder'] = $legder; 
          $html = $this->load->view("classpaytype_report/class-excelfile",$data, true);
          $filename ="Classifiedpaytype_report".$reportname.".xls"; 
-         header("Content-type: application/vnd.ms-excel");
-         header('Content-Disposition: attachment; filename='.$filename);
+         //header("Content-type: application/vnd.ms-excel");
+         //header('Content-Disposition: attachment; filename='.$filename);
          echo $html;
     }
     
